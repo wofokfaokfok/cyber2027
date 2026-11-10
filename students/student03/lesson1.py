@@ -1,58 +1,74 @@
 import math
-
-
 def english_score(text):
     """
-    מקבלת צופן (קיסר או טרנספוזיציה) ומחזירה ציון בין 0 ל-100 לאנגלית של הפענוח הנכון.
+    מקבלת צופן (קיסר או טרנספוזיציה) ומחזירה את המשפט המפוענח.
     המפתח לא ידוע, ולכן מנסים את כל האפשרויות ושומרים אותן ברשימה all_options.
-    שלב 1: מוצאים את הפענוח הנכון לפי רשימת המילים הקצרות (COMMON_WORDS).
-    שלב 2: נותנים לו ציון לפי רשימת המילים השכיחות: כל מילה ברשימה מוסיפה 10 נקודות, עד 100.
+    הפענוח הנכון נמצא לפי רשימת המילים הקצרות (COMMON_WORDS)
+    ורשימת המילים השכיחות (ENGLISH_WORDS).
     """
     # רשימת המילים הנפוצות הקצרות (אות אחת או שתיים) - למציאת הפענוח הנכון
     COMMON_WORDS = {
-        "A", "I", "AM", "AN", "AS", "AT", "BE", "BY", "DO", "HE", "IF", "IN", "IS",
-        "IT", "ME", "MY", "NO", "OF", "ON", "OR", "SO", "TO", "UP", "US", "WE",
+        "A", "I", "AM", "AN", "AS", "AT", "BE", "BY", "DO", "GO", "HE", "HI", "IF",
+        "IN", "IS", "IT", "ME", "MY", "NO", "OF", "OH", "ON", "OR", "SO", "TO", "UP",
+        "US", "WE",
     }
 
-    # רשימת מילים שכיחות באנגלית - לחישוב הציון של הפענוח שנמצא
+    # רשימת מילים שכיחות באנגלית
     ENGLISH_WORDS = {
-        "THE", "BE", "TO", "OF", "AND", "A", "IN", "THAT", "HAVE", "I", "IT", "FOR",
-        "NOT", "ON", "WITH", "HE", "AS", "YOU", "DO", "AT", "THIS", "BUT", "HIS",
-        "BY", "FROM", "THEY", "WE", "SAY", "HER", "SHE", "OR", "AN", "WILL", "MY",
-        "ONE", "ALL", "WOULD", "THERE", "THEIR", "WHAT", "SO", "UP", "OUT", "IF",
-        "ABOUT", "WHO", "GET", "WHICH", "GO", "ME", "WHEN", "MAKE", "CAN", "LIKE",
-        "TIME", "NO", "JUST", "HIM", "KNOW", "TAKE", "PEOPLE", "INTO", "YEAR",
-        "YOUR", "GOOD", "SOME", "COULD", "THEM", "SEE", "OTHER", "THAN", "THEN",
-        "NOW", "LOOK", "ONLY", "COME", "ITS", "OVER", "THINK", "ALSO", "BACK",
-        "AFTER", "USE", "TWO", "HOW", "OUR", "WORK", "FIRST", "WELL", "WAY", "EVEN",
-        "NEW", "WANT", "BECAUSE", "ANY", "THESE", "GIVE", "DAY", "MOST", "US",
-        "IS", "WAS", "ARE", "WERE", "HAS", "HAD", "BEEN", "DOES", "DID", "MORE",
-        "VERY", "MANY", "MUCH", "SUCH", "EACH", "EVERY", "BEFORE", "UNDER", "BETWEEN",
-        "THROUGH", "DURING", "WITHOUT", "AGAIN", "AGAINST", "ALWAYS", "NEVER",
-        "OFTEN", "EARLY", "LATE", "OLD", "YOUNG", "LARGE", "SMALL", "LONG", "SHORT",
-        "HIGH", "LOW", "GREAT", "LITTLE", "OWN", "SAME", "DIFFERENT", "IMPORTANT",
-        "MAN", "WOMAN", "CHILD", "WORLD", "LIFE", "HAND", "PLACE", "CASE", "WEEK",
-        "COMPANY", "SYSTEM", "PROGRAM", "QUESTION", "GOVERNMENT", "NUMBER", "NIGHT",
-        "POINT", "HOME", "WATER", "ROOM", "MOTHER", "AREA", "MONEY", "STORY",
-        "FACT", "MONTH", "RIGHT", "STUDY", "BOOK", "EYE", "JOB", "WORD", "BUSINESS",
-        "ISSUE", "SIDE", "KIND", "HEAD", "HOUSE", "SERVICE", "FRIEND", "FATHER",
-        "POWER", "HOUR", "GAME", "LINE", "END", "MEMBER", "LAW", "CAR", "CITY",
-        "COMMUNITY", "NAME", "PRESIDENT", "TEAM", "MINUTE", "IDEA", "KID", "BODY",
-        "INFORMATION", "BACK", "PARENT", "FACE", "OTHERS", "LEVEL", "OFFICE", "DOOR",
-        "HEALTH", "PERSON", "ART", "WAR", "HISTORY", "PARTY", "WITHIN", "GROW",
-        "OPEN", "WALK", "WIN", "OFFER", "REMEMBER", "LOVE", "CONSIDER", "APPEAR",
-        "BUY", "WAIT", "SERVE", "DIE", "SEND", "EXPECT", "BUILD", "STAY", "FALL",
-        "CUT", "REACH", "KILL", "REMAIN", "SUGGEST", "RAISE", "PASS", "SELL",
-        "REQUIRE", "REPORT", "DECIDE", "PULL", "MORNING", "EVENING", "WEATHER",
-        "STILL", "WHILE", "WHERE", "WHY", "SHOULD", "MIGHT", "MUST", "SHALL",
-        "MAY", "AROUND", "ABOVE", "BELOW", "NEAR", "FAR", "HERE", "TODAY",
-        "TOMORROW", "YESTERDAY", "HARD", "EASY", "BIG", "FEW", "LAST", "NEXT",
-        "FIND", "TELL", "ASK", "SEEM", "FEEL", "TRY", "LEAVE", "CALL", "KEEP",
-        "LET", "BEGIN", "SHOW", "HEAR", "PLAY", "RUN", "MOVE", "LIVE", "BELIEVE",
-        "BRING", "HAPPEN", "WRITE", "SIT", "STAND", "LOSE", "PAY", "MEET", "INCLUDE",
-        "CONTINUE", "SET", "LEARN", "CHANGE", "LEAD", "UNDERSTAND", "WATCH",
-        "FOLLOW", "STOP", "CREATE", "SPEAK", "READ", "SPEND", "ALLOW", "ADD",
-        "ARRIVE", "ARRIVED", "OPENED", "WALKED", "CHECKED", "CROSSED",
+        "ABOUT", "ABOVE", "ACROSS", "ACTOR", "ADD", "AFTER", "AGAIN", "AGAINST", "ALL",
+        "ALLOW", "ALSO", "ALWAYS", "AND", "ANY", "APPLAUD", "ARE", "AROUND", "ARRIVE",
+        "ARRIVES", "ARTIST", "ASK", "BABIES", "BABY", "BACK", "BAKE", "BAKER", "BAND", "BEAR",
+        "BECAUSE", "BEEN", "BEFORE", "BEGIN", "BELIEVE", "BELL", "BELLS", "BELOW", "BETWEEN",
+        "BIG", "BIRD", "BIRDS", "BLOCKS", "BLUE", "BOAT", "BODY", "BOILS", "BOOK", "BOWS",
+        "BOX", "BOY", "BREAD", "BRIDGE", "BRIGHT", "BRING", "BROTHER", "BROTHERS", "BUILD",
+        "BUS", "BUT", "CALL", "CALM", "CAMP", "CAN", "CANDLES", "CAPTAIN", "CARE", "CAREFUL",
+        "CASE", "CAT", "CATS", "CELEBRATE", "CHANGE", "CHEERS", "CHEF", "CHILD", "CHILDREN",
+        "CITY", "CLAP", "CLASS", "CLEARS", "CLIMB", "CLOCK", "CLOSES", "CLOUDS", "COLD",
+        "COME", "COMET", "CONTEST", "COOK", "COOKS", "COOL", "COULD", "COWS", "CRAWL", "CREAK",
+        "CREATE", "CROWD", "DANCES", "DAWN", "DAY", "DEPART", "DEPARTS", "DETECTIVE", "DID",
+        "DIFFERENT", "DIFFICULT", "DIG", "DINNER", "DOES", "DOG", "DOGS", "DOOR", "DOORS",
+        "DRAW", "DREAM", "DREAMS", "DRIFT", "DRIPS", "DRIVER", "DRIVERS", "DRUMMER", "DUCK",
+        "DURING", "EACH", "EARLY", "EASY", "EVEN", "EVENING", "EVERY", "EXPERIMENT", "FACE",
+        "FADES", "FAIR", "FALL", "FALLS", "FAMILY", "FANS", "FARMER", "FAST", "FATHER", "FEEL",
+        "FENCE", "FERRY", "FESTIVAL", "FEW", "FIND", "FIRST", "FLASHES", "FLICKER", "FLIES",
+        "FLOW", "FLOWERS", "FLY", "FOLLOW", "FOR", "FOREST", "FOUND", "FOX", "FRIEND",
+        "FRIENDS", "FROGS", "FROM", "FUN", "GAME", "GARDEN", "GARDENERS", "GATE", "GATHER",
+        "GENTLE", "GET", "GIRL", "GIVE", "GLOW", "GOOD", "GRANDMOTHER", "GRAZE", "GREAT",
+        "GREEN", "GROWS", "HAD", "HAND", "HAPPEN", "HARD", "HAS", "HAVE", "HEALTH", "HEAR",
+        "HELLO", "HELP", "HEN", "HER", "HERE", "HIGH", "HIM", "HIS", "HISTORY", "HOLD",
+        "HOLIDAY", "HOME", "HOMEWORK", "HONEST", "HOPE", "HOPS", "HORSE", "HOT", "HOUR",
+        "HOUSE", "HOW", "HOWL", "ICE", "IDEA", "IMPORTANT", "INSIDE", "INTO", "ISLAND", "ITS",
+        "JOKE", "JUMP", "JUMPS", "JUST", "KEEP", "KETTLE", "KEY", "KID", "KIDS", "KIND",
+        "KNOCK", "KNOW", "LAND", "LANDS", "LANTERNS", "LARGE", "LAST", "LATE", "LAUGH", "LEAD",
+        "LEAP", "LEARN", "LEAVE", "LEAVES", "LEFT", "LET", "LEVEL", "LIBRARY", "LIFE",
+        "LIGHTNING", "LIGHTS", "LIKE", "LINE", "LITTLE", "LIVE", "LOCAL", "LONG", "LOOK",
+        "LOOKS", "LOSE", "LOST", "LOVE", "LOW", "MAKE", "MAN", "MANY", "MAP", "MARKET",
+        "MATTER", "MEET", "MELTS", "MESSAGE", "MIDNIGHT", "MIGHT", "MONEY", "MONKEYS", "MONTH",
+        "MOON", "MORE", "MORNING", "MOST", "MOTHER", "MOTHERS", "MOVE", "MUCH", "MUSEUM",
+        "MUSIC", "MUST", "NAME", "NEAR", "NEIGHBORS", "NEST", "NESTS", "NEVER", "NEW", "NEXT",
+        "NOON", "NOT", "NOW", "OFFER", "OFFICE", "OFTEN", "OLD", "ONE", "ONLY", "OPEN",
+        "OPENS", "OTHER", "OUR", "OUT", "OUTSIDE", "OVER", "OWN", "OWNER", "PAINTS", "PAPER",
+        "PARTY", "PASS", "PASSES", "PATIENCE", "PAY", "PEOPLE", "PERSON", "PHONE", "PLACE",
+        "PLAN", "PLANE", "PLANES", "PLANTS", "PLAY", "PLAYS", "PLEASE", "POWER", "PRAY",
+        "PROJECT", "PULL", "PUPPY", "PUSH", "QUIETLY", "RABBIT", "RAIN", "REACH", "READ",
+        "READS", "REMEMBER", "REPORT", "REST", "RESTS", "RIDE", "RIGHT", "RING", "RINGS",
+        "RISES", "RIVERS", "ROBOT", "ROOF", "ROOM", "ROOTS", "RUN", "RUNNERS", "RUNS", "SAFE",
+        "SAME", "SANG", "SAY", "SCHOOL", "SCIENCE", "SEA", "SEASONS", "SEE", "SEEM", "SELL",
+        "SEND", "SETS", "SHALL", "SHE", "SHEEP", "SHIP", "SHORT", "SHOULD", "SHOW", "SING",
+        "SINGS", "SISTER", "SISTERS", "SKY", "SLEEP", "SLEEPS", "SLOW", "SLOWLY", "SLOWS",
+        "SMALL", "SMILE", "SMILES", "SNAKES", "SNOW", "SOFA", "SOFTLY", "SOME", "SONG", "SOUP",
+        "SPARKLE", "SPEAK", "SPEND", "STAND", "STANDS", "STARS", "STAY", "STILL", "STOP",
+        "STOPS", "STORM", "STORMS", "STORY", "STREET", "STRONG", "STUDENTS", "STUDY",
+        "SUCCESSFUL", "SUCH", "SUN", "SUNLIGHT", "SWIM", "SWIMS", "TAKE", "TALK", "TALKS",
+        "TEA", "TEAM", "TELL", "TESTING", "THAN", "THANKS", "THAT", "THE", "THEIR", "THEM",
+        "THEN", "THERE", "THESE", "THEY", "THINK", "THIS", "THROUGH", "TICKS", "TIME", "TODAY",
+        "TOMORROW", "TOWER", "TOWN", "TRAIL", "TRAIN", "TRAINS", "TROTS", "TRY", "TURN",
+        "TURTLES", "TWO", "UNDER", "USE", "VERY", "VISITOR", "VOLUNTEERS", "WAIT", "WALK",
+        "WALKS", "WANT", "WARM", "WAS", "WATCH", "WATER", "WAVE", "WAY", "WEATHER", "WEEK",
+        "WELL", "WERE", "WHAT", "WHEN", "WHERE", "WHICH", "WHILE", "WHISPERS", "WHO", "WHY",
+        "WILL", "WIN", "WINDS", "WINNERS", "WINS", "WITH", "WITHOUT", "WOLF", "WOLVES",
+        "WOMAN", "WONDERS", "WOODEN", "WORD", "WORDS", "WORK", "WORKERS", "WORKS", "WORLD",
+        "WOULD", "WRITE", "WRITERS", "YEAR", "YOU", "YOUNG", "YOUR",
     }
 
     text = text.upper()
@@ -93,33 +109,25 @@ def english_score(text):
                     option.append(columns[col][row])
         all_options.append(''.join(option))
 
-    # --- שלב 1: מציאת הפענוח הנכון לפי המילים הקצרות (COMMON_WORDS) ---
-    # מילה קצרה תקינה מוסיפה נקודה, מילה קצרה לא תקינה מורידה נקודה
+    # --- מציאת הפענוח הנכון ---
+    # מילה קצרה תקינה (COMMON_WORDS) מוסיפה נקודה, מילה קצרה לא תקינה מורידה נקודה,
+    # ובנוסף כל מילה שנמצאת ב-ENGLISH_WORDS מוסיפה נקודה.
+    # האפשרות עם הכי הרבה נקודות היא הפענוח הנכון.
     best_option = ""
-    best_short = None
+    best_points = None
     for option in all_options:
-        short_score = 0
+        points = 0
         for w in option.split():
+            w = w.strip(".,!?;:")
             if w in COMMON_WORDS:
-                short_score += 1
+                points += 1
             elif len(w) <= 2:
-                short_score -= 1
+                points -= 1
+            if w in ENGLISH_WORDS:
+                points += 1
 
-        if best_short is None or short_score > best_short:
-            best_short = short_score
+        if best_points is None or points > best_points:
+            best_points = points
             best_option = option
-
-    # --- שלב 2: ציון לפענוח שנמצא לפי המילים השכיחות (ENGLISH_WORDS) ---
-    score = 0
-    for w in best_option.split():
-        if w in ENGLISH_WORDS:
-            score += 5
-
-    return min(score, 100)
-
-
-if __name__ == "__main__":
-    caesar = "C UOCNN DQCV ETQUUGF VJG NCMG GCTNA KP VJG OQTPKPI DGHQTG VJG UVQTO CTTKXGF VJG OWUGWO QRGPGF C PGY GZJKDKVKQP CDQWV VJG JKUVQTA"
-    transposition = "TRIODAT ER BCARHAER LUM MTOKTIERT ALROOAOREHD Y S  ERLN  DEGN RTLFSND TA REEHOUAO I WHNT WAODRRENFAEDHT SMYG VGIL  EHL S ELE SKHC EIQ A ERTHEAHW BUFNHCYHEDREEB"
-    print(english_score(caesar))
-    print(english_score(transposition))
+    return best_option
+    return best_option
