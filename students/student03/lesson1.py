@@ -130,3 +130,5 @@ def english_score(text):
             best_points = points
             best_option = option
     return best_option
+if __name__ == "__main__":
+    
