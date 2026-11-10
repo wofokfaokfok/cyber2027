@@ -130,4 +130,3 @@ def english_score(text):
             best_points = points
             best_option = option
     return best_option
-    return best_option
